@@ -9,8 +9,8 @@ all: compile
 
 # Target to compile the needed .java files and store the resulting .class files in the
 #   working directory:
-compile: src/Main.java
-	javac -d ./ src/Main.java
+compile: src/Main.java src/Entry.java
+	javac -d ./ src/Main.java src/Entry.java
 
 # Target to be ran when wanting to create a tar-ball of the needed files to run the project:
 tar:
