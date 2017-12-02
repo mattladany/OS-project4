@@ -1,13 +1,13 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
- *
+ * 
  */
 public class Main {
 
     private static boolean debug = false;
+
 
     public static void main(String[] args) {
 
@@ -22,6 +22,7 @@ public class Main {
         BufferedReader reader;
         List<Entry> entries = new ArrayList<>();
 
+        // Reading the file from the command line args.
         try {
             reader = new BufferedReader(new FileReader(new File(filename)));
             String line;
@@ -36,6 +37,92 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);
+        }
+
+        /**** Initializing the needed data structures. ****/
+        // Getting the objects, groups, and users from the entries
+        Set<String> _objects = new HashSet<>();
+        Set<String> _users = new HashSet<>();
+        Set<String> _groups = new HashSet<>();
+
+        for (Entry entry : entries) {
+            _objects.add(entry.name);
+            _users.add(entry.owner);
+            _groups.add(entry.group);
+        }
+
+        // Initializing groups
+
+        Structures.groups = new HashMap<>();
+
+        for (String group : _groups) {
+            Structures.groups.put(group, new ArrayList());
+        }
+        Structures.groups.put("root", new ArrayList());
+
+        // Initializing the matrix
+
+        Structures.matrix = new HashMap<>();
+
+
+
+
+
+
+        Scanner kb = new Scanner(System.in);
+
+        loop:
+        while(true) {
+
+            print_menu();
+
+            switch(kb.nextLine()) {
+
+                // su
+                case "1":
+
+                    break;
+
+                // chown
+                case "2":
+
+                    break;
+
+                // chgrp
+                case "3":
+
+                    break;
+
+                // chmod
+                case "4":
+
+                    break;
+
+                // group add
+                case "5":
+
+                    break;
+
+                // group delete
+                case "6":
+
+                    break;
+
+                // access an object
+                case "7":
+
+                    break;
+
+                // exit the program
+                case "8":
+                    System.out.println("Exiting...");
+                    break loop;
+
+                // if something other than 1-8 was entered...
+                default:
+                    System.out.println("Please enter a number between 1 and 8.");
+            }
+
         }
 
     }
@@ -108,5 +195,20 @@ public class Main {
         System.out.println("  -d --debug  Display debugging output while running\n");
         System.out.println("  -f --file " + (char)27 + "[4mfile-path" + (char)27 + "[0m");
         System.out.println("              Provide the file to be read in. This is mandatory\n");
+    }
+
+    /**
+     * Function will print out the menu options each loop iteration in the main() function.
+     */
+    private static void print_menu() {
+        System.out.println("What would you like to do:");
+        System.out.println(" 1)  Su       - change to another user");
+        System.out.println(" 2)  Chown    - change the owner of an object");
+        System.out.println(" 3)  Chgrp    - change the group of an object");
+        System.out.println(" 4)  Chmod    - change the access rights on an object");
+        System.out.println(" 5)  Groupadd - add a user to a group");
+        System.out.println(" 6)  Groupdel - delete a user from a group");
+        System.out.println(" 7)  Access an object");
+        System.out.println(" 8)  Exit the program");
     }
 }
