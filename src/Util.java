@@ -4,6 +4,8 @@
  */
 public class Util {
 
+    public static String current_user = "root";
+
     /**
      * Function to be called when menu option 1 is entered.
      *  Will change the current user.

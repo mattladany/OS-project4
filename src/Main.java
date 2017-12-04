@@ -1,7 +1,5 @@
 import java.io.*;
-import java.sql.Struct;
 import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  *
@@ -82,6 +80,11 @@ public class Main {
 
         Scanner kb = new Scanner(System.in);
 
+        String username;
+        String group;
+        String object;
+        String permission;
+
         // Starting the menu loop
         loop:
         while(true) {
@@ -92,37 +95,101 @@ public class Main {
 
                 // su
                 case "1":
-
+                    System.out.println("Enter the username of the user you would like to swap to:");
+                    username = kb.nextLine();
+                    if (Util.su(username) == 0) {
+                        System.out.println("Operation failed.");
+                    } else {
+                        System.out.println("Success. User is now: " + username);
+                    }
                     break;
 
                 // chown
                 case "2":
-
+                    System.out.println("Enter the username to assign to the object:");
+                    username = kb.nextLine();
+                    System.out.println("Enter the object to be modified:");
+                    object = kb.nextLine();
+                    if (Util.chown(username, object) == 0) {
+                        System.out.println("Operation failed.");
+                    } else {
+                        System.out.println("Success. Object " + object + " now has " + username
+                                + " as its owner.");
+                    }
                     break;
 
                 // chgrp
                 case "3":
-
+                    System.out.println("Enter the group to assign to the object:");
+                    group = kb.nextLine();
+                    System.out.println("Enter the object to be modified:");
+                    object = kb.nextLine();
+                    if (Util.chgrp(group, object) == 0) {
+                        System.out.println("Operation failed.");
+                    } else {
+                        System.out.println("Success. Object " + object + " now has " + group
+                                + " as its group");
+                    }
                     break;
 
                 // chmod
                 case "4":
-
+                    System.out.println("Enter the object to be modified:");
+                    object = kb.nextLine();
+                    System.out.println("Enter the access rights to assign to the object:");
+                    permission = kb.nextLine();
+                    if (Util.chmod(object, permission) == 0) {
+                        System.out.println("Operation failed.");
+                    } else {
+                        System.out.println("Success. Object " + object + " now has " + permission
+                                + " as its access rights.");
+                    }
                     break;
 
                 // group add
                 case "5":
+                    System.out.println("Enter the username to be added to a group:");
+                    username = kb.nextLine();
+                    System.out.println("Enter the group to add the user to:");
+                    group = kb.nextLine();
+                    if (Util.groupadd(username, group) == 0) {
+                        System.out.println("Operation failed.");
+                    } else {
+                    System.out.println("Success. User " + username
+                            + " has been added to group " + group + ".");
+                    }
 
                     break;
 
                 // group delete
                 case "6":
-
+                    System.out.println("Enter the username to be removed from a group:");
+                    username = kb.nextLine();
+                    System.out.println("Enter the group to remove the user from:");
+                    group = kb.nextLine();
+                    if (Util.groupdel(username, group) == 0) {
+                        System.out.println("Operation failed.");
+                    } else {
+                        System.out.println("Success. User " + username
+                                + " has been removed from group " + group + ".");
+                    }
                     break;
 
                 // access an object
                 case "7":
-
+                    System.out.println("Enter the object wanting to be accessed:");
+                    object = kb.nextLine();
+                    System.out.println("Enter the manor in which the object is to " +
+                            "be accessed (R, W, or X):");
+                    String action = kb.nextLine();
+                    if (!action.equals("R") || !action.equals("W") || !action.equals("X"))
+                    if (Util.access(object, action) == 0) {
+                        System.out.println("Operation failed.");
+                    } else {
+                        System.out.println("Success. User " + Util.current_user
+                                + " has the permission to " + action
+                                + " object " + object + ".");
+                    }
                     break;
 
                 // exit the program
