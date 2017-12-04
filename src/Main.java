@@ -1,5 +1,7 @@
 import java.io.*;
+import java.sql.Struct;
 import java.util.*;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  *
@@ -41,13 +43,13 @@ public class Main {
 
         /**** Initializing the needed data structures. ****/
         // Getting the objects, groups, and users from the entries
-        Map<String, Integer> _objects = new HashMap<>();
-        Set<String> _users = new HashSet<>();
-        Set<String> _groups = new HashSet<>();
+        Structures.objects = new LinkedHashMap<>();
+        Set<String> _users = new LinkedHashSet<>();
+        Set<String> _groups = new LinkedHashSet<>();
 
         int index = 0;
         for (Entry entry : entries) {
-            _objects.put(entry.name, index);
+            Structures.objects.put(entry.name, index);
             _users.add(entry.owner);
             _groups.add(entry.group);
             index++;
@@ -63,10 +65,17 @@ public class Main {
 
         log("Groups structure has been initialized.");
 
+        // List holding 000 string elements, to initially be put in the matrix
+        List<String> perms = new ArrayList<>(Structures.objects.size());
+        for(int i = 0; i < Structures.objects.size(); i++) {
+            perms.add(i, "000");
+        }
+
         // Initializing matrix
-        Structures.matrix = new HashMap<>();
+
+        Structures.matrix = new LinkedHashMap<>();
         for (String user : _users) {
-            Structures.matrix.put(user, new ArrayList<String>(_objects.size()));
+            Structures.matrix.put(user, perms);
         }
 
         log("Access Matrix has been initialized.");
@@ -126,6 +135,8 @@ public class Main {
                     System.out.println("Please enter a number between 1 and 8.");
             }
 
+            log("Matrix looks like:");
+            log(Structures.printMatrix());
         }
 
     }
