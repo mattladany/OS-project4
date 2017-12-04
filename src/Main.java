@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * 
+ *
  */
 public class Main {
 
@@ -41,36 +41,39 @@ public class Main {
 
         /**** Initializing the needed data structures. ****/
         // Getting the objects, groups, and users from the entries
-        Set<String> _objects = new HashSet<>();
+        Map<String, Integer> _objects = new HashMap<>();
         Set<String> _users = new HashSet<>();
         Set<String> _groups = new HashSet<>();
 
+        int index = 0;
         for (Entry entry : entries) {
-            _objects.add(entry.name);
+            _objects.put(entry.name, index);
             _users.add(entry.owner);
             _groups.add(entry.group);
+            index++;
         }
 
         // Initializing groups
-
         Structures.groups = new HashMap<>();
 
         for (String group : _groups) {
-            Structures.groups.put(group, new ArrayList());
+            Structures.groups.put(group, new ArrayList<String>());
         }
         Structures.groups.put("root", new ArrayList());
 
-        // Initializing the matrix
+        log("Groups structure has been initialized.");
 
+        // Initializing matrix
         Structures.matrix = new HashMap<>();
+        for (String user : _users) {
+            Structures.matrix.put(user, new ArrayList<String>(_objects.size()));
+        }
 
-
-
-
-
+        log("Access Matrix has been initialized.");
 
         Scanner kb = new Scanner(System.in);
 
+        // Starting the menu loop
         loop:
         while(true) {
 
