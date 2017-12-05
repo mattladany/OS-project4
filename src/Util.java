@@ -1,3 +1,6 @@
+import java.util.List;
+import java.util.Set;
+
 /**
  * Class to hold static functions that will be used depending on the menu
  *  option entered when running the program.
@@ -10,10 +13,23 @@ public class Util {
      * Function to be called when menu option 1 is entered.
      *  Will change the current user.
      *
+     *  BONUS: Will require a password parameter if implemented.
+     *
      * @param user The user the user wants to switch to.
      * @return 1 on success; 0 on failure.
      */
     public static int su(String user) {
+
+        // Checking if the specified user exists.
+        if (!user.equals("root")) {
+            if (!Structures._users.contains(user)) {
+                System.out.println("User " + user + " does not exist.");
+                return 0;
+            }
+        }
+
+        // Performing su
+        current_user = user;
 
         return 1;
     }
@@ -31,6 +47,30 @@ public class Util {
      */
     public static int chown(String user, String obj) {
 
+        // Asserting that the current user is 'root'.
+        if (!current_user.equals("root")) {
+            System.out.println("Chown cannot be done by any user that is not root.");
+            return 0;
+        }
+
+        // Checking if the specified user exists.
+        if (!user.equals("root")) {
+            if (!Structures._users.contains(user)) {
+                System.out.println("User " + user + " does not exist.");
+                return 0;
+            }
+        }
+
+        // Checking if the specified object exists.
+        if (Structures.objects.get(obj) == null) {
+            System.out.println("Object " + obj + " does not exist.");
+            return 0;
+        }
+
+        // Performing chown
+        Object_t object_t = Structures.objects.get(obj);
+        object_t.owner = user;
+
         return 1;
     }
 
@@ -47,6 +87,30 @@ public class Util {
      */
     public static int chgrp(String group, String obj) {
 
+        // Asserting that the current user is 'root'.
+        if (!current_user.equals("root")) {
+            System.out.println("Chgrp cannot be done by any user that is not root.");
+            return 0;
+        }
+
+        // Checking if the specified group exists.
+        if (!group.equals("root")) {
+            if (!Structures._groups.contains(group)) {
+                System.out.println("Group " + group + " does not exist.");
+                return 0;
+            }
+        }
+
+        // Checking if the specified object exists.
+        if (Structures.objects.get(obj) == null) {
+            System.out.println("Object " + obj + " does not exist.");
+            return 0;
+        }
+
+        // Performing chgrp
+        Object_t object_t = Structures.objects.get(obj);
+        object_t.group = group;
+
         return 1;
     }
 
@@ -60,6 +124,45 @@ public class Util {
      * @return 1 on success; 0 on failure.
      */
     public static int chmod(String obj, String rights) {
+
+        // Asserting that the specified object exists.
+        if (!Structures.objects.keySet().contains(obj)) {
+            System.out.println("Object " + obj + " does not exist.");
+            return 0;
+        }
+
+        // Asserting that the rights parameter is a valid access right.
+        for (char c : rights.toCharArray()) {
+            if (!valid_num(c)) {
+                System.out.println("String provided is not a valid access right setting.");
+                return 0;
+            }
+        }
+
+        // Asserting that the current user has the permission to change the
+        //  access rights of the specified object.
+        if (!current_user.equals("root")
+                && !current_user.equals(Structures.objects.get(obj).owner)) {
+            System.out.println("The current user (" +  current_user + ") does " +
+                    "not have the permission to change the access rights on " +
+                    "object " + obj + ".");
+            return 0;
+        }
+
+        // Performing chmod.
+        if (current_user.equals("root")) {
+            for (String u : Structures._users) {
+                List<String> rights_list = Structures.matrix.get(u);
+                rights_list.set(Structures.objects.get(obj).index, rights);
+                Structures.matrix.put(u, rights_list);
+            }
+
+        } else {
+            List<String> rights_list = Structures.matrix.get(current_user);
+            rights_list.set(Structures.objects.get(obj).index, rights);
+            Structures.matrix.put(current_user, rights_list);
+        }
+
 
         return 1;
     }
@@ -75,6 +178,30 @@ public class Util {
      */
     public static int groupadd(String user, String group) {
 
+        // Making sure that the current user is root.
+        if (!current_user.equals("root")) {
+            System.out.println("Groupadd cannot be done by any user that is " +
+                    "not root.");
+            return 0;
+        }
+
+        // Asserting that the specified user, exists.
+        if (!Structures._users.contains(user)) {
+            System.out.println("User " + user + " does not exist.");
+            return 0;
+        }
+
+        // Asserting that the specified group, exists.
+        if (!Structures._groups.contains(group)) {
+            System.out.println("Group " + group + " does not exist.");
+            return 0;
+        }
+
+        // Performing groupadd.
+        Set<String> group_members = Structures.groups.get(group);
+        group_members.add(user);
+        Structures.groups.put(group, group_members);
+
         return 1;
     }
 
@@ -87,6 +214,37 @@ public class Util {
      * @return 1 on success; 0 on failure.
      */
     public static int groupdel(String user, String group) {
+
+        // Making sure the current user is root.
+        if (!current_user.equals("root")) {
+            System.out.println("Groupadd cannot be done by any user that is " +
+                    "not root.");
+            return 0;
+        }
+
+        // Asserting that the specified user, exists.
+        if (!Structures._users.contains(user)) {
+            System.out.println("User " + user + " does not exist.");
+            return 0;
+        }
+
+        // Asserting that the specified group, exists.
+        if (!Structures._groups.contains(group)) {
+            System.out.println("Group " + group + " does not exist.");
+            return 0;
+        }
+
+        // Asserting that the group contains the specified user.
+        if (!Structures.groups.get(group).contains(user)) {
+            System.out.println("Group " + group + " does not contain the " +
+                    "user " + user + ".");
+            return 0;
+        }
+
+        // Performing groupdel.
+        Set<String> group_members = Structures.groups.get(group);
+        group_members.remove(user);
+        Structures.groups.put(group, group_members);
 
         return 1;
     }
@@ -103,6 +261,12 @@ public class Util {
     public static int access(String obj, String method) {
 
         return 1;
+    }
+
+
+    private static boolean valid_num(char c) {
+        return (c == '0' || c == '1' || c == '2' || c == '3' || c == '4'
+                || c == '5' || c == '6' || c == '7');
     }
 
 }

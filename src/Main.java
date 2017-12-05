@@ -42,37 +42,40 @@ public class Main {
         /**** Initializing the needed data structures. ****/
         // Getting the objects, groups, and users from the entries
         Structures.objects = new LinkedHashMap<>();
-        Set<String> _users = new LinkedHashSet<>();
-        Set<String> _groups = new LinkedHashSet<>();
+        Structures._users = new LinkedHashSet<>();
+        Structures._groups = new LinkedHashSet<>();
 
         int index = 0;
         for (Entry entry : entries) {
-            Structures.objects.put(entry.name, index);
-            _users.add(entry.owner);
-            _groups.add(entry.group);
+            Structures.objects.put(entry.name,
+                    new Object_t(index, entry.owner, entry.group));
+            Structures._users.add(entry.owner);
+            Structures._groups.add(entry.group);
             index++;
         }
 
         // Initializing groups
-        Structures.groups = new HashMap<>();
+        Structures.groups = new LinkedHashMap<>();
 
-        for (String group : _groups) {
-            Structures.groups.put(group, new ArrayList<String>());
+        for (String group : Structures._groups) {
+            Structures.groups.put(group, new LinkedHashSet<>());
         }
-        Structures.groups.put("root", new ArrayList());
+        Structures.groups.put("root", new LinkedHashSet<>());
+        Structures._groups.add("root");
 
         log("Groups structure has been initialized.");
 
-        // List holding 000 string elements, to initially be put in the matrix
-        List<String> perms = new ArrayList<>(Structures.objects.size());
-        for(int i = 0; i < Structures.objects.size(); i++) {
-            perms.add(i, "000");
-        }
 
         // Initializing matrix
 
         Structures.matrix = new LinkedHashMap<>();
-        for (String user : _users) {
+        for (String user : Structures._users) {
+
+            // List holding 000 string elements, to initially be put in the matrix
+            List<String> perms = new ArrayList<>(Structures.objects.size());
+            for(int i = 0; i < Structures.objects.size(); i++) {
+                perms.add(i, "000");
+            }
             Structures.matrix.put(user, perms);
         }
 
@@ -202,8 +205,12 @@ public class Main {
                     System.out.println("Please enter a number between 1 and 8.");
             }
 
-            log("Matrix looks like:");
+            log("\nMatrix looks like:");
             log(Structures.printMatrix());
+            log("Objects look like:");
+            log(Structures.printObjects());
+            log("Groups look like:");
+            log(Structures.printGroups());
         }
 
     }
