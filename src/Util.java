@@ -7,6 +7,10 @@ import java.util.Set;
  */
 public class Util {
 
+    public static final byte READ = 0b100;
+    public static final byte WRITE = 0b10;
+    public static final byte EXECUTE = 0b1;
+
     public static String current_user = "root";
 
     /**
@@ -150,19 +154,24 @@ public class Util {
         }
 
         // Performing chmod.
-        if (current_user.equals("root")) {
-            for (String u : Structures._users) {
-                List<String> rights_list = Structures.matrix.get(u);
-                rights_list.set(Structures.objects.get(obj).index, rights);
-                Structures.matrix.put(u, rights_list);
-            }
+//        if (current_user.equals("root")) {
+//            for (String u : Structures._users) {
+//                List<String> rights_list = Structures.matrix.get(u);
+//                rights_list.set(Structures.objects.get(obj).index, rights);
+//                Structures.matrix.put(u, rights_list);
+//            }
+//
+//        } else {
+//            List<String> rights_list = Structures.matrix.get(current_user);
+//            rights_list.set(Structures.objects.get(obj).index, rights);
+//            Structures.matrix.put(current_user, rights_list);
+//        }
 
-        } else {
-            List<String> rights_list = Structures.matrix.get(current_user);
+        for (String u : Structures._users) {
+            List<String> rights_list = Structures.matrix.get(u);
             rights_list.set(Structures.objects.get(obj).index, rights);
-            Structures.matrix.put(current_user, rights_list);
+            Structures.matrix.put(u, rights_list);
         }
-
 
         return 1;
     }
@@ -260,9 +269,76 @@ public class Util {
      */
     public static int access(String obj, String method) {
 
+        // Asserting that the object specified, exists.
+        if (!Structures.objects.containsKey(obj)) {
+            System.out.println("Object " + obj + " does not exist.");
+            return 0;
+        }
+
+        // Asserting the method specified, is R, W, or X.
+        if (!method.equalsIgnoreCase("W") && !method.equalsIgnoreCase("R")
+                && !method.equalsIgnoreCase("X")) {
+            System.out.println("Method " + method + " needs to be 'R', " +
+                    "'W', or 'X'.");
+            return 0;
+        }
+
+        // Performing the access
+        if (!current_user.equals("root")) {
+            String permissions = Structures.matrix.get(current_user)
+                    .get(Structures.objects.get(obj).index);
+
+            // Owner rights
+            if (current_user.equals(Structures.objects
+                            .get(obj).owner)) {
+                byte b = Byte.parseByte(permissions.substring(0, 1));
+                if (!valid_access(b, method)) {
+                    System.out.println("The current user (" + current_user +
+                            ") does not have permission to read object " +
+                            obj + ".");
+                    return 0;
+                }
+
+            } // Group rights
+            else if (Structures.groups.get(Structures.objects
+                    .get(obj).group).contains(current_user)) {
+                byte b = Byte.parseByte(permissions.substring(1, 2));
+                if (!valid_access(b, method)) {
+                    System.out.println("The current user (" + current_user +
+                            ") does not have permission to write object " +
+                            obj + ".");
+                    return 0;
+                }
+
+            } // World rights
+            else {
+                byte b = Byte.parseByte(permissions.substring(2, 3));
+                if (!valid_access(b, method)) {
+                    System.out.println("The current user (" + current_user +
+                            ") does not have permission to execute object " +
+                            obj + ".");
+                    return 0;
+                }
+            }
+        }
+
         return 1;
     }
 
+
+    private static boolean valid_access(byte b, String method) {
+        boolean valid = false;
+
+        if (method.equalsIgnoreCase("W")) {
+            if ((b & WRITE) != 0) valid = true;
+        } else if (method.equalsIgnoreCase("R")) {
+            if ((b & READ) != 0) valid = true;
+        } else if (method.equalsIgnoreCase("X")) {
+            if ((b & WRITE) != 0) valid = true;
+        }
+
+        return valid;
+    }
 
     private static boolean valid_num(char c) {
         return (c == '0' || c == '1' || c == '2' || c == '3' || c == '4'

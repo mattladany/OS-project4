@@ -10,7 +10,7 @@ all: compile
 # Target to compile the needed .java files and store the resulting .class files in the
 #   working directory:
 compile: src/Main.java src/Entry.java src/Structures.java src/Util.java src/Object_t.java
-	javac -d ./ src/Main.java src/Entry.java src/Structures.java src/Util.java src/Object_t.java -Xlint:unchecked
+	javac -d ./bin/ src/Main.java src/Entry.java src/Structures.java src/Util.java src/Object_t.java -Xlint:unchecked
 
 # Target to be ran when wanting to create a tar-ball of the needed files to run the project:
 tar:
@@ -18,4 +18,4 @@ tar:
 
 # Target to be ran when wanting to remove all created files, other than necessities, and start fresh:
 clean:
-	\rm -rf project04.tar.gz *.class project04/
+	\rm -rf project04.tar.gz bin/ project04/ output.txt

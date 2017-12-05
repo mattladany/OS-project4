@@ -1,6 +1,6 @@
 if [ -f "Main.class" ]
 then
-	java Main $@
+	java -classpath bin/ Main $@
 else
 	echo "Please compile by running 'make' first"
 fi
