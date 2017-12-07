@@ -7,10 +7,12 @@ import java.util.Set;
  */
 public class Util {
 
+    /******** Final variables to bitmask with ********/
     public static final byte READ = 0b100;
     public static final byte WRITE = 0b10;
     public static final byte EXECUTE = 0b1;
 
+    /******** The current user, to be updated by the su function ********/
     public static String current_user = "root";
 
     /**
@@ -32,7 +34,7 @@ public class Util {
             }
         }
 
-        // Performing su
+        // Performing su.
         current_user = user;
 
         return 1;
@@ -71,7 +73,7 @@ public class Util {
             return 0;
         }
 
-        // Performing chown
+        // Performing chown.
         Object_t object_t = Structures.objects.get(obj);
         object_t.owner = user;
 
@@ -111,7 +113,7 @@ public class Util {
             return 0;
         }
 
-        // Performing chgrp
+        // Performing chgrp.
         Object_t object_t = Structures.objects.get(obj);
         object_t.group = group;
 
@@ -154,19 +156,6 @@ public class Util {
         }
 
         // Performing chmod.
-//        if (current_user.equals("root")) {
-//            for (String u : Structures._users) {
-//                List<String> rights_list = Structures.matrix.get(u);
-//                rights_list.set(Structures.objects.get(obj).index, rights);
-//                Structures.matrix.put(u, rights_list);
-//            }
-//
-//        } else {
-//            List<String> rights_list = Structures.matrix.get(current_user);
-//            rights_list.set(Structures.objects.get(obj).index, rights);
-//            Structures.matrix.put(current_user, rights_list);
-//        }
-
         for (String u : Structures._users) {
             List<String> rights_list = Structures.matrix.get(u);
             rights_list.set(Structures.objects.get(obj).index, rights);
@@ -276,14 +265,14 @@ public class Util {
         }
 
         // Asserting the method specified, is R, W, or X.
-        if (!method.equalsIgnoreCase("W") && !method.equalsIgnoreCase("R")
-                && !method.equalsIgnoreCase("X")) {
+        if (!method.equals("W") && !method.equals("R")
+                && !method.equals("X")) {
             System.out.println("Method " + method + " needs to be 'R', " +
                     "'W', or 'X'.");
             return 0;
         }
 
-        // Performing the access
+        // Performing the access.
         if (!current_user.equals("root")) {
             String permissions = Structures.matrix.get(current_user)
                     .get(Structures.objects.get(obj).index);
@@ -338,17 +327,15 @@ public class Util {
      * @return false if the bitwise-AND outputs a 0; true otherwise.
      */
     private static boolean valid_access(byte b, String method) {
-        boolean valid = false;
 
-        if (method.equals("W")) {
-            if ((b & WRITE) != 0) valid = true;
-        } else if (method.equals("R")) {
-            if ((b & READ) != 0) valid = true;
-        } else if (method.equals("X")) {
-            if ((b & WRITE) != 0) valid = true;
+        switch (method) {
+            case "W": if ((b & WRITE) != 0)     return true;
+            case "R": if ((b & READ) != 0)      return true;
+            case "E": if ((b & EXECUTE) != 0)   return true;
+            default: System.exit(-1);
         }
 
-        return valid;
+        return false;
     }
 
     /**
