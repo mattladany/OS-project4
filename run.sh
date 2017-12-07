@@ -1,4 +1,4 @@
-if [ -f "Main.class" ]
+if [ -f "bin/Main.class" ]
 then
 	java -classpath bin/ Main $@
 else

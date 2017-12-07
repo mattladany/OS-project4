@@ -1,6 +1,7 @@
 /**
  * Class to store the entries in the input file.
- *  Instance variables are 'public' to simulate the functionality of a
+ *
+ *  Note: Instance variables are 'public' to simulate the functionality of a
  *  C struct.
  */
 public class Entry {

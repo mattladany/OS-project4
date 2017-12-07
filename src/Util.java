@@ -326,20 +326,38 @@ public class Util {
     }
 
 
+    /**
+     * Function to determine if the specified method is valid, given the
+     *  specified byte.
+     *
+     *  The given byte will be bitwise-AND'd with the READ, WRITE, or EXECUTE
+     *      final values defined above.
+     *
+     * @param b The byte to be bitwise-AND'd with.
+     * @param method The method that is being validated.
+     * @return false if the bitwise-AND outputs a 0; true otherwise.
+     */
     private static boolean valid_access(byte b, String method) {
         boolean valid = false;
 
-        if (method.equalsIgnoreCase("W")) {
+        if (method.equals("W")) {
             if ((b & WRITE) != 0) valid = true;
-        } else if (method.equalsIgnoreCase("R")) {
+        } else if (method.equals("R")) {
             if ((b & READ) != 0) valid = true;
-        } else if (method.equalsIgnoreCase("X")) {
+        } else if (method.equals("X")) {
             if ((b & WRITE) != 0) valid = true;
         }
 
         return valid;
     }
 
+    /**
+     * Function to validate that the specified character is one that is
+     *  between 0 and 7.
+     *
+     * @param c The character being validated.
+     * @return true if c is 0-7; false otherwise.
+     */
     private static boolean valid_num(char c) {
         return (c == '0' || c == '1' || c == '2' || c == '3' || c == '4'
                 || c == '5' || c == '6' || c == '7');
