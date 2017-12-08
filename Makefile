@@ -18,4 +18,4 @@ tar:
 
 # Target to be ran when wanting to remove all created files, other than necessities, and start fresh:
 clean:
-	\rm -rf project04.tar.gz bin/ project04/ output.txt
+	\rm -rf project04.tar.gz bin/* project04/ output.txt
