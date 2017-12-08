@@ -1,10 +1,15 @@
-import java.io.*;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.File;
+
 import java.math.BigInteger;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
 import java.util.List;
 import java.util.Set;
-import java.security.DigestOutputStream;
 
 /**
  * Class to hold static functions that will be used depending on the menu
@@ -24,7 +29,7 @@ public class Util {
      * Function to be called when menu option 1 is entered.
      *  Will change the current user.
      *
-     *  BONUS: Will require a password parameter if implemented.
+     *  BONUS: Will require a password parameter.
      *
      * @param user The user the user wants to switch to.
      * @return 1 on success; 0 on failure.
@@ -45,7 +50,14 @@ public class Util {
         return 1;
     }
 
-
+    /**
+     * Function to be called when menu option 1 is entered.
+     *  Will change the current user if the given password is correct.
+     *
+     * @param user The user the user wants to switch to.
+     * @param password The entered password for the specified user.
+     * @return 1 on success; 0 on failure.
+     */
     public static int su_bonus(String user, String password) {
 
         // Checking if the specified user exists.
@@ -67,9 +79,11 @@ public class Util {
 
         md.update(password.getBytes());
         byte[] digest_bytes = md.digest();
-        String computed_hash = String.format( "%064x", new BigInteger(1, digest_bytes ));
+        String computed_hash = String.format("%064x",
+                new BigInteger(1, digest_bytes));
         Main.log("Computed SHA-256 hash: " + computed_hash);
 
+        // Getting the stored hash for 'user' in the hashes.txt file.
         try {
             BufferedReader reader = new BufferedReader(
                     new FileReader(new File("passwords/hashes.txt")));
@@ -77,7 +91,9 @@ public class Util {
             while((line = reader.readLine()) != null) {
                 String[] split_line = line.split(":");
                 if (split_line[0].equals(user)) {
-                    Main.log("Stored SHA-256 hash: " + split_line[1]);
+                    Main.log("Stored SHA-256 hash:   " + split_line[1]);
+
+                    // Comparing the hashes to verify correctness.
                     if (computed_hash.equals(split_line[1])) break;
                     else {
                         System.out.println("Password for user " + user
@@ -115,7 +131,8 @@ public class Util {
 
         // Asserting that the current user is 'root'.
         if (!current_user.equals("root")) {
-            System.out.println("Chown cannot be done by any user that is not root.");
+            System.out.println("Chown cannot be done by any user that" +
+                    " is not root.");
             return 0;
         }
 
@@ -155,7 +172,8 @@ public class Util {
 
         // Asserting that the current user is 'root'.
         if (!current_user.equals("root")) {
-            System.out.println("Chgrp cannot be done by any user that is not root.");
+            System.out.println("Chgrp cannot be done by any user that" +
+                    " is not root.");
             return 0;
         }
 
@@ -200,7 +218,8 @@ public class Util {
         // Asserting that the rights parameter is a valid access right.
         for (char c : rights.toCharArray()) {
             if (!valid_num(c)) {
-                System.out.println("String provided is not a valid access right setting.");
+                System.out.println("String provided is not a valid access" +
+                        " right setting.");
                 return 0;
             }
         }
@@ -324,7 +343,7 @@ public class Util {
             return 0;
         }
 
-        // Asserting the method specified, is R, W, or X.
+        // Asserting the method specified is R, W, or X.
         if (!method.equals("W") && !method.equals("R")
                 && !method.equals("X")) {
             System.out.println("Method " + method + " needs to be 'R', " +
@@ -380,7 +399,7 @@ public class Util {
      *  specified byte.
      *
      *  The given byte will be bitwise-AND'd with the READ, WRITE, or EXECUTE
-     *      final values defined above.
+     *      final values defined above, depending on the method param's value.
      *
      * @param b The byte to be bitwise-AND'd with.
      * @param method The method that is being validated.
@@ -389,9 +408,9 @@ public class Util {
     private static boolean valid_access(byte b, String method) {
 
         switch (method) {
-            case "R": if ((b & READ) != 0)      return true;
-            case "W": if ((b & WRITE) != 0)     return true;
-            case "E": if ((b & EXECUTE) != 0)   return true;
+            case "R": if ((b & READ) != 0)    return true; break;
+            case "W": if ((b & WRITE) != 0)   return true; break;
+            case "X": if ((b & EXECUTE) != 0) return true; break;
             default: System.exit(-1);
         }
 
