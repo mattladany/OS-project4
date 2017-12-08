@@ -108,8 +108,6 @@ public class Util {
             System.exit(-1);
         }
 
-
-
         // Performing su.
         current_user = user;
 
@@ -402,12 +400,13 @@ public class Util {
      *      final values defined above, depending on the method param's value.
      *
      * @param b The byte to be bitwise-AND'd with.
-     * @param method The method that is being validated.
+     * @param right The right that is being validated.
      * @return false if the bitwise-AND outputs a 0; true otherwise.
      */
-    private static boolean valid_access(byte b, String method) {
+    private static boolean valid_access(byte b, String right) {
 
-        switch (method) {
+        // Determining/checking the right.
+        switch (right) {
             case "R": if ((b & READ) != 0)    return true; break;
             case "W": if ((b & WRITE) != 0)   return true; break;
             case "X": if ((b & EXECUTE) != 0) return true; break;

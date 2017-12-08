@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- *
+ * Main class, to run the program, and set up the loop for the menu.
  */
 public class Main {
 
@@ -98,9 +98,9 @@ public class Main {
 
                 // su
                 case "1":
+                    System.out.println("Enter the username of the user you would like to swap to:");
+                    username = kb.nextLine();
                     if (bonus) {
-                        System.out.println("Enter the username of the user you would like to swap to:");
-                        username = kb.nextLine();
                         System.out.println("Enter the password:");
                         String password = kb.nextLine();
                         if (Util.su_bonus(username, password) == 0) {
@@ -109,8 +109,6 @@ public class Main {
                             System.out.println("Success. User is now: " + username);
                         }
                     } else {
-                        System.out.println("Enter the username of the user you would like to swap to:");
-                        username = kb.nextLine();
                         if (Util.su(username) == 0) {
                             System.out.println("Operation failed.");
                         } else {
@@ -295,6 +293,7 @@ public class Main {
         System.out.println(" Options are:");
         System.out.println("  -h --help   Display usage\n");
         System.out.println("  -d --debug  Display debugging output while running\n");
+        System.out.println("  -b --bonus  Run in 'Bonus' mode (must enter passwords for usernames)\n");
         System.out.println("  -f --file " + (char)27 + "[4mfile-path" + (char)27 + "[0m");
         System.out.println("              Provide the file to be read in. This is mandatory\n");
     }
