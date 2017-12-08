@@ -7,6 +7,7 @@ import java.util.*;
 public class Main {
 
     private static boolean debug = false;
+    private static boolean bonus = false;
 
 
     public static void main(String[] args) {
@@ -67,7 +68,6 @@ public class Main {
 
 
         // Initializing matrix
-
         Structures.matrix = new LinkedHashMap<>();
         for (String user : Structures._users) {
 
@@ -98,12 +98,24 @@ public class Main {
 
                 // su
                 case "1":
-                    System.out.println("Enter the username of the user you would like to swap to:");
-                    username = kb.nextLine();
-                    if (Util.su(username) == 0) {
-                        System.out.println("Operation failed.");
+                    if (bonus) {
+                        System.out.println("Enter the username of the user you would like to swap to:");
+                        username = kb.nextLine();
+                        System.out.println("Enter the password:");
+                        String password = kb.nextLine();
+                        if (Util.su_bonus(username, password) == 0) {
+                            System.out.println("Operation failed.");
+                        } else {
+                            System.out.println("Success. User is now: " + username);
+                        }
                     } else {
-                        System.out.println("Success. User is now: " + username);
+                        System.out.println("Enter the username of the user you would like to swap to:");
+                        username = kb.nextLine();
+                        if (Util.su(username) == 0) {
+                            System.out.println("Operation failed.");
+                        } else {
+                            System.out.println("Success. User is now: " + username);
+                        }
                     }
                     break;
 
@@ -205,6 +217,7 @@ public class Main {
                     System.out.println("Please enter a number between 1 and 8.");
             }
 
+            log("\nCurrent user: " + Util.current_user);
             log("\nMatrix looks like:");
             log(Structures.printMatrix());
             log("Objects look like:");
@@ -237,19 +250,20 @@ public class Main {
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
 
-                case "-h":
-                case "--help":
+                case "-h": case "--help":
                     print_help_message();
                     System.exit(0);
 
-                case "-d":
-                case "--debug":
+                case "-d": case "--debug":
                     Main.debug = true;
                     break;
 
-                case "-f":
-                case "--file":
+                case "-f": case "--file":
                     file_path = args[++i];
+                    break;
+
+                case "-b": case "--bonus":
+                    Main.bonus = true;
                     break;
 
                 default:

@@ -1,5 +1,10 @@
+import java.io.*;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Set;
+import java.security.DigestOutputStream;
 
 /**
  * Class to hold static functions that will be used depending on the menu
@@ -33,6 +38,61 @@ public class Util {
                 return 0;
             }
         }
+
+        // Performing su.
+        current_user = user;
+
+        return 1;
+    }
+
+
+    public static int su_bonus(String user, String password) {
+
+        // Checking if the specified user exists.
+        if (!user.equals("root")) {
+            if (!Structures._users.contains(user)) {
+                System.out.println("User " + user + " does not exist.");
+                return 0;
+            }
+        }
+
+        // Verifying the password.
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
+        md.update(password.getBytes());
+        byte[] digest_bytes = md.digest();
+        String computed_hash = String.format( "%064x", new BigInteger(1, digest_bytes ));
+        Main.log("Computed SHA-256 hash: " + computed_hash);
+
+        try {
+            BufferedReader reader = new BufferedReader(
+                    new FileReader(new File("passwords/hashes.txt")));
+            String line;
+            while((line = reader.readLine()) != null) {
+                String[] split_line = line.split(":");
+                if (split_line[0].equals(user)) {
+                    Main.log("Stored SHA-256 hash: " + split_line[1]);
+                    if (computed_hash.equals(split_line[1])) break;
+                    else {
+                        System.out.println("Password for user " + user
+                                + " is not correct.");
+                        return 0;
+                    }
+                }
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
+
 
         // Performing su.
         current_user = user;
@@ -329,8 +389,8 @@ public class Util {
     private static boolean valid_access(byte b, String method) {
 
         switch (method) {
-            case "W": if ((b & WRITE) != 0)     return true;
             case "R": if ((b & READ) != 0)      return true;
+            case "W": if ((b & WRITE) != 0)     return true;
             case "E": if ((b & EXECUTE) != 0)   return true;
             default: System.exit(-1);
         }
