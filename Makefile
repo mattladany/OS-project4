@@ -14,7 +14,7 @@ compile: src/Main.java src/Entry.java src/Structures.java src/Util.java src/Obje
 
 # Target to be ran when wanting to create a tar-ball of the needed files to run the project:
 tar:
-	make clean ; mkdir project04 ; cp Makefile project04/ ; cp README.md project04/ ; cp run.sh project04/ ; cp -r src project04/ ; cp -r bin project04/ ; tar -czf project04.tar.gz project04/
+	make clean ; mkdir project04 ; cp Makefile project04/ ; cp README.md project04/ ; cp run.sh project04/ ; cp -r src project04/ ; cp -r bin project04/ ; cp -r passwords project04/ ; tar -czf project04.tar.gz project04/
 
 # Target to be ran when wanting to remove all created files, other than necessities, and start fresh:
 clean:

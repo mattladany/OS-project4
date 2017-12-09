@@ -30,3 +30,5 @@ This program simulates the basic functionalities of accessing objects that have 
 
 You can do any of the things above, by typing in the number associated with them, and following the instructions afterwards.
 
+**Bonus Details**
+There are two files in the passwords/ directory. One (passwords.txt) holds the users and their passwords; the other (hashes.txt) holds the users and their hashed passwords. The passwords.txt file can be used to know what password to enter for what user, and the hashes.txt file is used by the program to get the actual hash of the specified user's password, and compare it to the hash calculated using the password entered by the user of the program.
